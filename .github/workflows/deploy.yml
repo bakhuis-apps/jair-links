@@ -1,0 +1,78 @@
+# The DEPLOYER: every merge to main builds the Vite app and publishes it to GitHub
+# Pages (free for public repos). Pages is SELF-ENABLED on first run via configure-pages
+# `enablement: true` — which requires a token with repo/administration rights, NOT the
+# default GITHUB_TOKEN (verified against actions/configure-pages/action.yml), hence the
+# PAGES_ADMIN_TOKEN org secret. The `check` job makes the initial template-only push a
+# green no-op: until the builder has created package.json there is nothing to deploy.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.probe.outputs.ready }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: probe
+        run: |
+          if [ -f package.json ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "No package.json yet - template-only repo, nothing to deploy (this is fine)."
+          fi
+
+  deploy:
+    needs: check
+    if: needs.check.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build (base path forced in CI so the builder can't break routing)
+        run: npm run build -- --base=/${{ github.event.repository.name }}/
+
+      - name: SPA fallback (deep links resolve on Pages)
+        run: cp dist/index.html dist/404.html
+
+      - name: Configure GitHub Pages (self-enabling)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+          # enablement needs more than the default GITHUB_TOKEN: an org-secret PAT with
+          # repo scope (or a GitHub App token with administration:write + pages:write).
+          token: ${{ secrets.PAGES_ADMIN_TOKEN }}
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

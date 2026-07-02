@@ -1,0 +1,15 @@
+# dependencies / build output
+node_modules/
+dist/
+dist-ssr/
+
+# local env & editor noise — secrets never belong in this (public) repo
+.env
+.env.*
+!.env.example
+.DS_Store
+*.local
+
+# logs
+npm-debug.log*
+*.log

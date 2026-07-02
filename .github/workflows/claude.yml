@@ -1,0 +1,50 @@
+# The BUILDER: Claude Code runs on GitHub's free runners whenever @claude is mentioned
+# in an issue or comment, and implements what was asked (billed to the owner's existing
+# Claude Max subscription via the org-level CLAUDE_CODE_OAUTH_TOKEN secret — no API key,
+# no new spend). Vision (the Telegram assistant) opens the issues and merges the PRs;
+# this workflow is what turns her briefs into code.
+name: Claude Builder
+
+on:
+  issues:
+    types: [opened, assigned]
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  claude:
+    # Only run when @claude is actually addressed (issue body or any comment).
+    if: |
+      (github.event_name == 'issues' && contains(github.event.issue.body, '@claude')) ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write   # required by the action to fetch the GitHub OIDC token
+      actions: read     # lets Claude read CI results on its own PRs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          # Max-subscription OAuth token (org secret, created once with `claude setup-token`).
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Tools Claude may use. Prefix patterns (npm:*, npx:*) — exact-match patterns
+          # like "Bash(npm install)" deny "npm install <package>", which silently
+          # crippled the first live build (2026-07-02). The runner is GitHub's own
+          # throwaway sandbox, so a permissive dev-tool set here is low-risk.
+          claude_args: |
+            --model claude-opus-4-8
+            --allowedTools "Edit,Write,Read,Glob,Grep,Bash(npm:*),Bash(npx:*),Bash(node:*),Bash(mkdir:*),Bash(ls:*),Bash(cat:*),Bash(cp:*),Bash(mv:*)"
