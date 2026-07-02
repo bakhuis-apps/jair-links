@@ -2,6 +2,7 @@
 node_modules/
 dist/
 dist-ssr/
+*.tsbuildinfo
 
 # local env & editor noise — secrets never belong in this (public) repo
 .env

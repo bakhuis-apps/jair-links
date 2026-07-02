@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Design tokens. All colors are HSL channel triplets so Tailwind can compose
+   them with opacity (hsl(var(--token) / 50%)). Change the palette here only.
+   --------------------------------------------------------------------------- */
+@layer base {
+  :root {
+    --background: 210 40% 99%;
+    --foreground: 222 32% 16%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 32% 16%;
+
+    --primary: 245 72% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 245 45% 96%;
+    --secondary-foreground: 245 40% 32%;
+
+    --muted: 220 22% 96%;
+    --muted-foreground: 220 12% 46%;
+
+    --accent: 245 60% 94%;
+    --accent-foreground: 245 45% 32%;
+
+    --border: 220 20% 90%;
+    --input: 220 20% 90%;
+    --ring: 245 72% 60%;
+
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 224 32% 8%;
+    --foreground: 210 24% 92%;
+
+    --card: 224 28% 12%;
+    --card-foreground: 210 24% 92%;
+
+    --primary: 245 78% 70%;
+    --primary-foreground: 224 40% 10%;
+
+    --secondary: 245 24% 18%;
+    --secondary-foreground: 245 30% 84%;
+
+    --muted: 223 22% 16%;
+    --muted-foreground: 220 14% 64%;
+
+    --accent: 245 30% 20%;
+    --accent-foreground: 245 30% 86%;
+
+    --border: 223 20% 20%;
+    --input: 223 20% 22%;
+    --ring: 245 78% 70%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Consistent, visible focus ring on every interactive element. */
+  :where(a, button, [tabindex]):focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background rounded-md;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
