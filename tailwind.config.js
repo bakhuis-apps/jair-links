@@ -29,6 +29,10 @@ export default {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
+        brass: {
+          DEFAULT: "hsl(var(--brass))",
+          foreground: "hsl(var(--brass-foreground))",
+        },
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
@@ -46,32 +50,64 @@ export default {
         "2xl": "calc(var(--radius) + 8px)",
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["Fraunces", "Georgia", "ui-serif", "serif"],
+        // Display: characterful, contemporary grotesque used with restraint.
+        display: ["Bricolage Grotesque", "ui-sans-serif", "system-ui", "sans-serif"],
+        // Body: warm humanist grotesque, easy for a non-technical reader.
+        sans: ["Hanken Grotesk", "ui-sans-serif", "system-ui", "sans-serif"],
+        // Utility: engraved instrument label for tool names and eyebrows.
+        mono: ["Space Mono", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       boxShadow: {
-        soft: "0 1px 2px hsl(var(--foreground) / 0.04), 0 8px 24px hsl(var(--foreground) / 0.06)",
-        lift: "0 2px 4px hsl(var(--foreground) / 0.05), 0 16px 40px hsl(var(--foreground) / 0.10)",
+        // Shadows carry a faint harbor-teal tint rather than neutral grey.
+        soft: "0 1px 2px hsl(196 42% 11% / 0.05), 0 10px 30px hsl(196 42% 11% / 0.07)",
+        lift: "0 2px 6px hsl(196 42% 11% / 0.06), 0 22px 50px hsl(196 42% 11% / 0.14)",
+        // Warm glow used behind the central Vision orb.
+        glow: "0 0 0 1px hsl(var(--brass) / 0.35), 0 0 40px hsl(var(--brass) / 0.35), 0 0 90px hsl(var(--primary) / 0.30)",
       },
       keyframes: {
         "fade-up": {
-          "0%": { opacity: "0", transform: "translateY(16px)" },
+          "0%": { opacity: "0", transform: "translateY(18px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in": {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
-        "pulse-ring": {
-          "0%": { transform: "scale(0.9)", opacity: "0.5" },
-          "70%": { transform: "scale(1.25)", opacity: "0" },
-          "100%": { transform: "scale(1.25)", opacity: "0" },
+        // Signature: the central orb breathes, its halo swelling gently.
+        "orb-glow": {
+          "0%, 100%": {
+            boxShadow:
+              "0 0 0 1px hsl(var(--brass) / 0.30), 0 0 26px hsl(var(--brass) / 0.28), 0 0 70px hsl(var(--primary) / 0.22)",
+          },
+          "50%": {
+            boxShadow:
+              "0 0 0 1px hsl(var(--brass) / 0.45), 0 0 46px hsl(var(--brass) / 0.42), 0 0 110px hsl(var(--primary) / 0.34)",
+          },
+        },
+        // The instrument bezel turns almost imperceptibly — alive, not busy.
+        "bezel-spin": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        // Orbit rings and spokes draw themselves in on load.
+        "draw-in": {
+          "0%": { strokeDashoffset: "var(--dash, 320)", opacity: "0" },
+          "100%": { strokeDashoffset: "0", opacity: "1" },
+        },
+        // A pulse of light travels from Vision out to a tool.
+        "signal": {
+          "0%": { opacity: "0", transform: "scale(0.4)" },
+          "40%": { opacity: "1" },
+          "100%": { opacity: "0", transform: "scale(1)" },
         },
       },
       animation: {
-        "fade-up": "fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both",
-        "fade-in": "fade-in 0.8s ease both",
-        "pulse-ring": "pulse-ring 3s cubic-bezier(0.16, 1, 0.3, 1) infinite",
+        "fade-up": "fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "fade-in": "fade-in 0.9s ease both",
+        "orb-glow": "orb-glow 5s ease-in-out infinite",
+        "bezel-spin": "bezel-spin 90s linear infinite",
+        "draw-in": "draw-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "signal": "signal 4.5s ease-out infinite",
       },
     },
   },

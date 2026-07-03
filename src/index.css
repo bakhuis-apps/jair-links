@@ -1,62 +1,86 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------------
-   Design tokens. All colors are HSL channel triplets so Tailwind can compose
-   them with opacity (hsl(var(--token) / 50%)). Change the palette here only.
+   Design tokens — "Observatory: Jade & Brass".
+
+   The subject is Vision: a private AI assistant that sits at the centre of
+   Jair's day and reaches out to everything he uses. The palette gives that a
+   meaning: JADE is Vision itself (calm, trustworthy), BRASS/amber is the light
+   it casts out along each connection. Two hues, one story.
+
+   Named hex (light):  Porcelain #F0F4F2 · Harbor Ink #0F1E26 · Jade #0F8A72 ·
+                       Brass #E79A2A
+   Named hex (dark):   Harbor #0A1A20 · Deep Pine #10242B · Bright Jade #26B597 ·
+                       Warm Brass #F0B24A
+
+   All colors are HSL channel triplets so Tailwind can compose them with
+   opacity (hsl(var(--token) / 50%)). Change the palette here only.
    --------------------------------------------------------------------------- */
 @layer base {
   :root {
-    --background: 210 40% 99%;
-    --foreground: 222 32% 16%;
+    /* Porcelain — a cool, pale mint-grey, not a warm cream. */
+    --background: 152 20% 95%;
+    --foreground: 196 42% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 32% 16%;
+    --card-foreground: 196 42% 11%;
 
-    --primary: 245 72% 60%;
+    /* Jade — Vision itself. */
+    --primary: 168 84% 30%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 245 45% 96%;
-    --secondary-foreground: 245 40% 32%;
+    /* Pale jade chip. */
+    --secondary: 168 34% 91%;
+    --secondary-foreground: 168 66% 20%;
 
-    --muted: 220 22% 96%;
-    --muted-foreground: 220 12% 46%;
+    --muted: 156 18% 91%;
+    --muted-foreground: 194 14% 38%;
 
-    --accent: 245 60% 94%;
-    --accent-foreground: 245 45% 32%;
+    /* Brass/amber — the light Vision casts along each connection. */
+    --brass: 36 82% 53%;
+    --brass-foreground: 196 42% 11%;
 
-    --border: 220 20% 90%;
-    --input: 220 20% 90%;
-    --ring: 245 72% 60%;
+    /* Pale brass chip / soft highlight surface. */
+    --accent: 40 70% 90%;
+    --accent-foreground: 30 74% 26%;
 
-    --radius: 1rem;
+    --border: 156 18% 85%;
+    --input: 156 18% 85%;
+    --ring: 168 84% 30%;
+
+    --radius: 1.15rem;
   }
 
   .dark {
-    --background: 224 32% 8%;
-    --foreground: 210 24% 92%;
+    /* Harbor ink — a deep teal night, not a flat near-black. */
+    --background: 195 46% 8%;
+    --foreground: 158 22% 90%;
 
-    --card: 224 28% 12%;
-    --card-foreground: 210 24% 92%;
+    --card: 193 40% 12%;
+    --card-foreground: 158 22% 90%;
 
-    --primary: 245 78% 70%;
-    --primary-foreground: 224 40% 10%;
+    --primary: 166 64% 43%;
+    --primary-foreground: 195 46% 8%;
 
-    --secondary: 245 24% 18%;
-    --secondary-foreground: 245 30% 84%;
+    --secondary: 182 30% 17%;
+    --secondary-foreground: 160 42% 82%;
 
-    --muted: 223 22% 16%;
-    --muted-foreground: 220 14% 64%;
+    --muted: 193 30% 15%;
+    --muted-foreground: 172 15% 62%;
 
-    --accent: 245 30% 20%;
-    --accent-foreground: 245 30% 86%;
+    --brass: 40 88% 62%;
+    --brass-foreground: 195 46% 8%;
 
-    --border: 223 20% 20%;
-    --input: 223 20% 22%;
-    --ring: 245 78% 70%;
+    --accent: 38 40% 20%;
+    --accent-foreground: 40 84% 74%;
+
+    --border: 190 26% 20%;
+    --input: 190 26% 22%;
+    --ring: 166 64% 43%;
   }
 }
 
@@ -71,7 +95,6 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-feature-settings: "cv11", "ss01";
     text-rendering: optimizeLegibility;
   }
 
@@ -88,9 +111,20 @@
     *::before,
     *::after {
       animation-duration: 0.001ms !important;
+      /* Snap entrance animations straight to their final (visible) state
+         instead of holding the pre-delay 0% keyframe. */
+      animation-delay: 0ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.001ms !important;
     }
+  }
+}
+
+@layer components {
+  /* Engraved instrument-label kicker used above section headings and on the
+     "real tool name" whispers — mono, wide-tracked, small. */
+  .kicker {
+    @apply font-mono text-xs font-normal uppercase tracking-[0.22em] text-brass;
   }
 }
 
@@ -100,5 +134,11 @@
   }
   .text-pretty {
     text-wrap: pretty;
+  }
+  /* Subtle grain of light: a faint radial brass wash for atmosphere. */
+  .beam {
+    background:
+      radial-gradient(60% 45% at 50% 0%, hsl(var(--brass) / 0.16), transparent 70%),
+      radial-gradient(50% 40% at 50% 8%, hsl(var(--primary) / 0.12), transparent 72%);
   }
 }
